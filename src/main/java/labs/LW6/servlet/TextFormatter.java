@@ -1,43 +1,35 @@
-package labs.servlet.LW6;
+package labs.LW6.servlet;
 
 import java.io.*;
 
 public class TextFormatter {
-
     public static String formatText(String fileName) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        BufferedReader reader = null;
-        String indent = "   ";
-        try {
-            reader = new BufferedReader(new FileReader(fileName));
-            String line;
+        String result = null;
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            String line = null, indent = "   ";
+            StringBuilder sb = new StringBuilder();
             while ((line = reader.readLine()) != null) {
-                // Удаляем начальные и конечные пробелы
-                line = line.trim();
-                // Добавляем отступы
-                line = indent + line;
-                // Разбиваем строку на подстроки длиной 80 символов
-                while (line.length() > 80) {
-                    int index = line.lastIndexOf(" ", 80);
-                    sb.append(line.substring(0, index)).append("\n");
-                    line = indent + line.substring(index + 1);
-                }
                 sb.append(line).append("\n");
             }
-        } catch (FileNotFoundException e) {
-            sb.append("File not found: ").append(fileName);
-        } finally {
-            if (reader != null) {
-                reader.close();
-            }
-        }
+            line = sb.toString().trim().replaceAll("\\n", indent);
+            sb = new StringBuilder();
+            int length = line.length();
+            for (int i = 0; i < length; i += 80) {
+                int endIndex = Math.min(i + 80, length);
+                String substring = line.substring(i, endIndex);
 
-        return sb.toString();
+                sb.append(substring).append("\n");
+            }
+            result = sb.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     public static void writeToFile(String fileName, String text) throws IOException {
-        FileWriter writer = new FileWriter(fileName);
-        writer.write(text);
-        writer.close();
+        try (FileWriter writer = new FileWriter(fileName)){
+            writer.write(text);
+        }
     }
 }

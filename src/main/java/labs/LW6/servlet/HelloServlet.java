@@ -1,4 +1,4 @@
-package labs.servlet.LW6;
+package labs.LW6.servlet;
 
 import java.io.*;
 import jakarta.servlet.ServletConfig;
@@ -23,17 +23,13 @@ public class HelloServlet extends HttpServlet {
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
 
-        // Получаем параметры из запроса
         String fileName = request.getParameter("fileName");
 
-        // Вызываем метод форматирования текста
         String formattedText = TextFormatter.formatText(getServletContext().getRealPath(fileName));
 
-        // Записываем результат в новый файл
         String newFileName = fileName.substring(0, fileName.lastIndexOf(".")) + "_formatted.txt";
         TextFormatter.writeToFile(newFileName, formattedText);
 
-        // Выводим результат на страницу
         out.println("<html>");
         out.println("<head>");
         out.println("<title>Formatted Text</title>");
