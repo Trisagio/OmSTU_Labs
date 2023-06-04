@@ -5,7 +5,7 @@
 
 ## Результат
 ### MySQL Workbench
-[![Результат](./LW4_create_workbench.png)](https://drive.google.com/file/d/1BSLOf02Bhmk3gcpNnNk8WdG1a4DYVtz-/view?usp=sharing)
+[![Результат](./LW4_read_workbench.png)](https://drive.google.com/file/d/1BSLOf02Bhmk3gcpNnNk8WdG1a4DYVtz-/view?usp=sharing)
 ### Create
 [![Результат](./LW4_create.png)](https://drive.google.com/file/d/1BSLOf02Bhmk3gcpNnNk8WdG1a4DYVtz-/view?usp=sharing)
 ### Read
