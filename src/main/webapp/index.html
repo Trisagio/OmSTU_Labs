@@ -1,0 +1,104 @@
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+    <title>List of Solar system</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <meta charset="utf-8">
+</head>
+<body>
+<h1>List of the Solar system</h1>
+<div id="planetsTable">
+    <table>
+        <thead>
+        <tr>
+            <th>name</th>
+            <th>planetNum</th>
+            <th>NumOfMoons</th>
+            <th>Diameter</th>
+            <th>DistanceFromSun</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Table rows will be dynamically generated -->
+        </tbody>
+    </table>
+</div>
+
+<div id="addForm">
+    <h2>Add new planet</h2>
+    <form id="addPlanetsForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br>
+
+        <label for="planetNum">PlanetNum:</label>
+        <input type="text" id="planetNum" name="planetNum" required><br>
+
+        <label for="numOfMoons">NumOfMoons:</label>
+        <input type="text" id="numOfMoons" name="numOfMoons" required><br>
+
+        <label for="diameter">Diameter:</label>
+        <input type="text" id="diameter" name="diameter" required><br>
+
+        <label for="distanceFromSun">Distance:</label>
+        <input type="text" id="distanceFromSun" name="distanceFromSun" required><br>
+
+        <button type="submit">Add</button>
+    </form>
+</div>
+<script>
+    $(document).ready(function() {
+        loadPlanets(); // Load objects on page load
+
+        // Handle form submission
+        $('#addPlanetsForm').submit(function(event) {
+            event.preventDefault();
+            addPlanets();
+        });
+    });
+
+    function loadPlanets() {
+        $.ajax({
+            url: 'planets',
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                // Clear the table body
+                $('#planetsTable tbody').empty();
+
+                // Iterate through the data and append rows to the table
+                for (let i = 0; i < data.length; i++) {
+                    var planet = data[i];
+                    var row = '<tr>' +
+                        '<td>' + planet.name + '</td>' +
+                        '<td>' + planet.planetNum + '</td>' +
+                        '<td>' + planet.numOfMoons + '</td>' +
+                        '<td>' + planet.diameter + '</td>' +
+                        '<td>' + planet.distanceFromSun + '</td>' +
+                        '</tr>';
+                    $('#planetsTable tbody').append(row);
+                }
+                console.debug("row=" + row);
+            }
+        });
+    }
+
+    function addPlanets() {
+        var form = $('#addPlanetsForm');
+        var data = form.serialize();
+
+        $.ajax({
+            url: 'planets',
+            type: 'POST',
+            data: data,
+            success: function() {
+                // Clear the form fields
+                form.trigger('reset');
+
+                // Reload data
+                loadPlanets();
+            }
+        });
+    }
+</script>
+</body>
+</html>
