@@ -1,0 +1,188 @@
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+    <title>List of Solar system</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <meta charset="utf-8">
+</head>
+<body>
+<h1>List of the Solar system</h1>
+<div id="planetsTable">
+    <table>
+        <thead>
+        <tr>
+            <th>name</th>
+            <th>planetNum</th>
+            <th>NumOfMoons</th>
+            <th>Diameter</th>
+            <th>DistanceFromSun</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Table rows will be dynamically generated -->
+        </tbody>
+    </table>
+</div>
+
+<div id="addForm">
+    <h2>Add new planet</h2>
+    <form id="addPlanetsForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br>
+
+        <label for="planetNum">PlanetNum:</label>
+        <input type="text" id="planetNum" name="planetNum" required><br>
+
+        <label for="numOfMoons">NumOfMoons:</label>
+        <input type="text" id="numOfMoons" name="numOfMoons" required><br>
+
+        <label for="diameter">Diameter:</label>
+        <input type="text" id="diameter" name="diameter" required><br>
+
+        <label for="distanceFromSun">Distance:</label>
+        <input type="text" id="distanceFromSun" name="distanceFromSun" required><br>
+
+        <button type="submit">Add</button>
+    </form>
+</div>
+<!-- Edit Modal -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Edit</h2>
+        <form id="editPlanetsForm">
+            <input type="hidden" name="id">
+            <label for="name">Name:</label>
+            <input type="text" name="name" required><br>
+
+            <label for="planetNum">PlanetNum:</label>
+            <input type="text" name="planetNum" required><br>
+
+            <label for="numOfMoons">NumOfMoons:</label>
+            <input type="text" name="numOfMoons" required><br>
+
+            <label for="diameter">Diameter:</label>
+            <input type="text" name="diameter" required><br>
+
+            <label for="distanceFromSun">Distance:</label>
+            <input type="text" name="distanceFromSun" required><br>
+
+            <input type="submit" value="Save">
+        </form>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        loadPlanets(); // Load objects on page load
+
+        // Handle form submission
+        $('#addPlanetsForm').submit(function(event) {
+            event.preventDefault();
+            addPlanets();
+        });
+
+        $('#editPlanetsForm').submit(function(event) {
+            event.preventDefault();
+            saveEditedPlanet();
+        });
+
+        $('.close').click(function() {
+            $('#editModal').hide();
+        });
+    });
+
+    function loadPlanets() {
+        $.ajax({
+            url: 'planets',
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                // Clear the table body
+                $('#planetsTable tbody').empty();
+
+                // Iterate through the data and append rows to the table
+                for (let i = 0; i < data.length; i++) {
+                    let planet = data[i];
+                    let row = '<tr>' +
+                        '<td>' + planet.name + '</td>' +
+                        '<td>' + planet.planetNum + '</td>' +
+                        '<td>' + planet.numOfMoons + '</td>' +
+                        '<td>' + planet.diameter + '</td>' +
+                        '<td>' + planet.distanceFromSun + '</td>' +
+                        '<td>' +
+                        '<button onclick="editPlanet(' + planet.id + ')">Edit</button>' +
+                        '<button onclick="deletePlanet(' + planet.id + ')">Delete</button>' +
+                        '<td>' +
+                        '</tr>';
+                    $('#planetsTable tbody').append(row);
+                }
+                console.debug("row=" + row);
+            }
+        });
+    }
+
+    function addPlanets() {
+        let formData= $('#addPlanetsForm').serialize();
+
+        $.ajax({
+            url: 'planets',
+            type: 'POST',
+            data: formData,
+            success: function() {
+                // Clear the form fields
+                formData.trigger('reset');
+
+                // Reload data
+                loadPlanets();
+            }
+        });
+    }
+
+    function editPlanet(planetId) {
+        $.ajax({
+            url: 'planets/' + planetId,
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                $('#editPlanetsForm input[name="id"]').val(data.id);
+                $('#editPlanetsForm input[name="name"]').val(data.name);
+                $('#editPlanetsForm input[name="planetNum"]').val(data.planetNum);
+                $('#editPlanetsForm input[name="numOfMoons"]').val(data.numOfMoons);
+                $('#editPlanetsForm input[name="diameter"]').val(data.diameter);
+                $('#editPlanetsForm input[name="distanceFromSun"]').val(data.distanceFromSun);
+
+                $('#editModal').show();
+            }
+        });
+    }
+
+
+    function saveEditedPlanet() {
+        let formData = $('#editPlanetsForm').serialize();
+        let planetId = $('#editPlanetsForm input[name="id"]').val();
+        $.ajax({
+            url: 'planets/' + planetId,
+            type: 'PUT',
+            data: formData,
+            success: function() {
+                loadPlanets();
+                $('#editModal').hide();
+            }
+        });
+    }
+
+    function deletePlanet(planetId) {
+        if (confirm('Delete row?')) {
+            $.ajax({
+                url: 'planets/' + planetId,
+                type: 'DELETE',
+                success: function() {
+                    loadPlanets();
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>
