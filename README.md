@@ -1,4 +1,4 @@
 # OmSTU Labs
-Lab works from 6 to 4
+Лабораторные работы по объектно-ориентированному программированию (4 семестр)
 
-You can find project files in their respective branches
+Вы можете найти файлы лабораторных в соответствующих ветках
